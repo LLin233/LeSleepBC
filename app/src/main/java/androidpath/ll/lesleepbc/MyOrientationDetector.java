@@ -9,9 +9,6 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.OrientationEventListener;
 
-import androidpath.ll.lesleepbc.Events.OrientationChangedEvent;
-import de.greenrobot.event.EventBus;
-
 public class MyOrientationDetector extends OrientationEventListener {
     public MyOrientationDetector(Context context) {
         super(context, SensorManager.SENSOR_DELAY_NORMAL);
@@ -41,7 +38,7 @@ public class MyOrientationDetector extends OrientationEventListener {
 //        } else {
 //            return;
 //        }
-        EventBus.getDefault().post(new OrientationChangedEvent(orientation));
+        //EventBus.getDefault().post(new OrientationChangedEvent(orientation));
         Log.i("MyOrientationDetector ", "onOrientationChanged:" + orientation);
     }
 }

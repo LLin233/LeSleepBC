@@ -23,7 +23,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"/>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"/>
+
+    <Button
+        android:id="@+id/test"
+        android:layout_marginTop="500dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="flashData"
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

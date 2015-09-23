@@ -52,7 +52,7 @@ public class SleepTrackingActivity extends AppCompatActivity {
 
         public void onSensorChanged(SensorEvent event) {
             float x = event.values[0];
-            EventBus.getDefault().post(new LightChangedEvent(x));
+            //EventBus.getDefault().post(new LightChangedEvent(x));
         }
     };
 
@@ -62,9 +62,7 @@ public class SleepTrackingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep_tracking);
         //init framework
-        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
-
         setUpSensor();
         setSupportActionBar(toolbar);
 
@@ -125,6 +123,7 @@ public class SleepTrackingActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mMyOrientationDetector.enable();
+        EventBus.getDefault().registerSticky(this);
         sensorManager.registerListener(mLightListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -136,8 +135,13 @@ public class SleepTrackingActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
+        super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
         if (sensorManager != null) {
             sensorManager.unregisterListener(mLightListener);
         }

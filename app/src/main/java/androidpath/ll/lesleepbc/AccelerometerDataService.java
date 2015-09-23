@@ -14,11 +14,13 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import com.google.gson.Gson;
 
-import androidpath.ll.lesleepbc.Events.DataEvent;
+import java.io.FileWriter;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import androidpath.ll.lesleepbc.Events.SleepDataUpdateEvent;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -26,68 +28,68 @@ import de.greenrobot.event.EventBus;
  */
 public class AccelerometerDataService extends Service {
     private final String TAG = getClass().getName();
+    private String filePath = Environment.getExternalStorageDirectory().getPath() + "/test.json";
+    private TimerTask updateTask;
+    Timer updateTimer;
+
+    int time = 14;
+
+    private final class UpdateTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            //final long currentTime = System.currentTimeMillis();
+            //final float x = currentTime;
+            final float x = time;
+            time += 3;
+            float y = java.lang.Math
+                    .min(DEFAULT_MIN_SENSITIVITY, maxNetForce);
+            Log.d(TAG, time + ":  " + y);
+
+            final SleepPoint sleepPoint = new SleepPoint(x + "", y);
+            EventBus.getDefault().post(new SleepDataUpdateEvent(sleepPoint));
+//
+            mSleepData.add(sleepPoint);
+            jsonProcess(mSleepData);
+            // append the two doubles in sleepPoint to file
+            //TODO: send data to chart, stickyEvent
+            maxNetForce = 0;
+        }
+    }
+
+
     public static final String SLEEP_DATA = "sleepData";
 
     private boolean alreadyDeletedResidualFile = false;
+    // Object for intrinsic lock
+    public static final Object DATA_LOCK = new Object();
 
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
     private int waitForSensorsToWarmUp = 0;
-    public static float DEFAULT_MIN_SENSITIVITY = 0.0F;
+    public static float DEFAULT_MIN_SENSITIVITY = 1.0F;
     private final float alpha = 0.8f;
-    private final float[] gravity = {0, 0, 0};
+    private float maxNetForce = 0.0f;
+    public static int MAX_POINTS_IN_A_GRAPH = 200;
+    private float[] gravity = {0, 0, 0};
+    private SleepData mSleepData;
+
 
     private SensorEventListener mAccelerometerlistener = new SensorEventListener() {
         private static final int BUFFER_SIZE = 50;
         private static final String CSV_SEPARATOR = ",";
         private String FILENAME = Environment.getExternalStorageDirectory().getPath() + "/data.csv";
-        private Number[][] buf = new Number[BUFFER_SIZE][3];
-        private int pos = 0;
+
 
         @Override
         public void onSensorChanged(final SensorEvent event) {
-//            buf[pos][0] = System.currentTimeMillis(); //time
-//            buf[pos][1] = event.values[0]; // x
-//            buf[pos][2] = event.values[1]; // y
-//            buf[pos][3] = event.values[2]; // z
-//            pos++;
-//
-//            if (pos >= BUFFER_SIZE) {
-//                try {
-//                    File file = new File(FILENAME);
-//                    file.createNewFile();
-//                    BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-//
-//                    for (int i = 0; i < pos; i++) {
-//                        StringBuilder line = new StringBuilder();
-//
-//                        line.append(buf[i][0]);
-//                        line.append(CSV_SEPARATOR);
-//                        line.append(buf[i][1]);
-//                        line.append(CSV_SEPARATOR);
-//                        line.append(buf[i][2]);
-//                        line.append(CSV_SEPARATOR);
-//                        line.append(buf[i][3]);
-//                        line.append("\n");
-//                        EventBus.getDefault().postSticky(new DataEvent(line.toString()));
-//                        Log.d(TAG, line.toString());
-//                        writer.append(line.toString());
-//                    }
-//
-//                    writer.flush();
-//                    writer.close();
-//                } catch (Exception e) {
-//                    Log.e(TAG, "Error appending data to file!", e);
-//                } finally {
-//                    pos = 0;
-//                }
-//            }
-
             if (waitForSensorsToWarmUp < 5) {
                 if (waitForSensorsToWarmUp == 4) {
                     waitForSensorsToWarmUp++;
                     try {
+                        updateTask = new UpdateTimerTask();
+                        updateTimer.scheduleAtFixedRate(updateTask,
+                                6000, 6000);
 
                     } catch (IllegalStateException ise) {
                         // user stopped monitoring really quickly after
@@ -106,47 +108,15 @@ public class AccelerometerDataService extends Service {
             gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
             gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
 
-            final double curX = event.values[0] - gravity[0];
-            final double curY = event.values[1] - gravity[1];
-            final double curZ = event.values[2] - gravity[2];
+            double curX = event.values[0] - gravity[0];
+            double curY = event.values[1] - gravity[1];
+            double curZ = event.values[2] - gravity[2];
 
-            final double mAccelCurrent = Math.sqrt(curX * curX + curY * curY + curZ * curZ);
-            final double absAccel = Math.abs(mAccelCurrent);
+            double mAccelCurrent = Math.sqrt(curX * curX + curY * curY + curZ * curZ);
+            double absAccel = Math.abs(mAccelCurrent);
+            maxNetForce = (float) (absAccel > maxNetForce ? absAccel : maxNetForce);
 
-            buf[pos][0] = System.currentTimeMillis(); //time
-            buf[pos][1] = mAccelCurrent;
-            buf[pos][2] = absAccel;
-            pos++;
-
-            if (pos >= BUFFER_SIZE) {
-                try {
-                    File file = new File(FILENAME);
-                    file.createNewFile();
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-
-                    for (int i = 0; i < pos; i++) {
-                        StringBuilder line = new StringBuilder();
-
-                        line.append(buf[i][0]);
-                        line.append(CSV_SEPARATOR);
-                        line.append(buf[i][1]);
-                        line.append(CSV_SEPARATOR);
-                        line.append(buf[i][2]);
-                        line.append("\n");
-                        EventBus.getDefault().post(new DataEvent(line.toString()));
-                        Log.d(TAG, line.toString());
-                        writer.append(line.toString());
-                    }
-                    writer.flush();
-                    writer.close();
-                } catch (Exception e) {
-                    Log.e(TAG, "Error appending data to file!", e);
-                } finally {
-                    pos = 0;
-                }
-            }
         }
-
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -156,6 +126,7 @@ public class AccelerometerDataService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        updateTimer = new Timer();
     }
 
 
@@ -167,6 +138,10 @@ public class AccelerometerDataService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        mSleepData = new SleepData();
+
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(mAccelerometerlistener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -183,33 +158,43 @@ public class AccelerometerDataService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         startForeground(1337, mBuilder.build());
 
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                if (!alreadyDeletedResidualFile) {
-                    deleteFile(SLEEP_DATA);
-                    alreadyDeletedResidualFile = true;
-                }
-//                final SharedPreferences.Editor ed = getSharedPreferences(SERVICE_IS_RUNNING,
-//                        Context.MODE_PRIVATE).edit();
-//                ed.putBoolean(SERVICE_IS_RUNNING, true);
-//                ed.commit();
-                return null;
-            }
-        }.execute();
-
-
         return START_STICKY;
     }
 
-
     @Override
     public void onDestroy() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                SleepData temp = mSleepData;
+                jsonProcess(temp);
+                return null;
+            }
+        };
+        updateTimer.cancel();
         if (sensorManager != null) {
             sensorManager.unregisterListener(mAccelerometerlistener);
         }
+        super.onDestroy();
 
     }
+
+
+    private void jsonProcess(SleepData sleepData) {
+        Gson gson = new Gson();
+        System.out.println("filePath:" + filePath);//查看实际路径
+        try {
+            String json = gson.toJson(sleepData);
+            FileWriter writer = new FileWriter(filePath);
+            writer.write(json);
+            writer.close();
+            System.out.println("JSON写入完毕");
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 
 }
