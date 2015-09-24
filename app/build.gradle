@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "androidpath.ll.lesleepbc"
-        minSdkVersion 10
+        minSdkVersion 11
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -19,6 +19,13 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -26,4 +33,7 @@ dependencies {
     compile 'com.android.support:design:22.2.0'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.1.4'
+    compile 'com.github.lecho:hellocharts-android:v1.5.7'
+    compile 'com.google.code.gson:gson:2.2.4'
 }
