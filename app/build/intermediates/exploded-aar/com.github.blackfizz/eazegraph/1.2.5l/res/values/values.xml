@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BarChart"><attr format="boolean" name="egShowValues"/></declare-styleable>
+    <declare-styleable name="BaseBarChart"><attr format="dimension" name="egBarWidth"/><attr format="dimension" name="egBarMargin"/><attr format="boolean" name="egFixedBarWidth"/></declare-styleable>
+    <declare-styleable name="BaseChart"><attr format="integer" name="egAnimationTime"/><attr format="color" name="egLegendColor"/><attr format="dimension" name="egLegendHeight"/><attr format="dimension" name="egLegendTextSize"/><attr format="boolean" name="egShowDecimal"/><attr format="string" name="egEmptyDataText"/><attr format="boolean" name="egUseLeftFiller"/><attr format="dimension" name="egLeftFillerSize"/></declare-styleable>
+    <declare-styleable name="PieChart"><attr format="float" name="egInnerPadding"/><attr format="float" name="egInnerPaddingOutline"/><attr format="boolean" name="egUseInnerPadding"/><attr format="float" name="egHighlightStrength"/><attr format="boolean" name="egOpenClockwise"/><attr format="color" name="egInnerPaddingColor"/><attr format="boolean" name="egUseInnerValue"/><attr format="dimension" name="egInnerValueSize"/><attr format="color" name="egInnerValueColor"/><attr format="string" name="egInnerValueString"/></declare-styleable>
+    <declare-styleable name="ValueLineChart"><attr format="float" name="egCurveSmoothness"/><attr format="boolean" name="egUseCubic"/><attr format="boolean" name="egUseOverlapFill"/><attr format="dimension" name="egLineStroke"/><attr format="dimension" name="egXAxisStroke"/><attr format="boolean" name="egUseDynamicScaling"/><attr format="float" name="egScalingFactor"/><attr format="color" name="egAxisTextColor"/><attr format="dimension" name="egAxisTextSize"/></declare-styleable>
+    <!-- From: file:/Users/paul/Documents/EazeGraph/EazeGraph/EazeGraphLibrary/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">EazeGraphLibrary</string>
+</resources>

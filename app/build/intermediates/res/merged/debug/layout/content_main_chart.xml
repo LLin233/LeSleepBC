@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.github.mikephil.charting.charts.LineChart
+    android:id="@+id/chart"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/><!-- From: file:/D:/GitHub/LeSleepBC/app/src/main/res/layout/content_main_chart.xml -->
