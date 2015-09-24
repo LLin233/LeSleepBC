@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="androidpath.ll.lesleepbc"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="androidpath.ll.lesleepbc"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
+        android:name=".Utils.SleepApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".Views.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -25,15 +25,25 @@
         <service android:name=".AccelerometerDataService"/>
 
         <activity
-            android:name=".SleepTrackingActivity"
+            android:name=".Views.SleepTrackingActivity"
             android:label="@string/title_activity_sleep_tracking"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".Views.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="androidpath.ll.lesleepbc.MainActivity"/>
+                android:value=".Views.MainActivity"/>
         </activity>
+        <activity
+            android:name=".Views.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Views.MainActivity"/>
+        </activity>
+
+
     </application>
 
 </manifest>

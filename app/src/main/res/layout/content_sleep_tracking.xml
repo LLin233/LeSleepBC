@@ -12,27 +12,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_sleep_tracking"
-    tools:context="androidpath.ll.lesleepbc.SleepTrackingActivity">
+    tools:context="androidpath.ll.lesleepbc.Views.SleepTrackingActivity">
 
     <TextView
-        android:id="@+id/data"
+        android:layout_gravity="center"
+        android:id="@+id/status_recording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="no data"/>
-
-    <TextView
-        android:id="@+id/status_light"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="unknown"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-    <TextView
-        android:id="@+id/status_orientation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unknown"
+        android:text="Recording : OFF"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_marginTop="40dp"/>
 

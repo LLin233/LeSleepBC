@@ -1,15 +1,15 @@
 package androidpath.ll.lesleepbc;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -17,79 +17,75 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidpath.ll.lesleepbc.Events.SleepDataUpdateEvent;
-import de.greenrobot.event.EventBus;
+import androidpath.ll.lesleepbc.Model.SleepData;
+import androidpath.ll.lesleepbc.Model.SleepPoint;
+import androidpath.ll.lesleepbc.Utils.MyOrientationDetector;
+import androidpath.ll.lesleepbc.Utils.ShakeDetector;
+import androidpath.ll.lesleepbc.Utils.SleepApplication;
+import androidpath.ll.lesleepbc.Views.SleepTrackingActivity;
 
 /**
  * Created by Le on 2015/9/16.
  */
+
 public class AccelerometerDataService extends Service {
     private final String TAG = getClass().getName();
-    private String filePath = Environment.getExternalStorageDirectory().getPath() + "/test.json";
-    private TimerTask updateTask;
-    Timer updateTimer;
+    private String filePath;
 
-    int time = 14;
+
+
+    //sensor
+    private MyOrientationDetector mMyOrientationDetector;
+    private SensorManager sensorManager;
+    private Sensor lightSensor, accelerometer;
+    private ShakeDetector mShakeDetector;
+
+
+    private TimerTask updateTask;
+    private Timer updateTimer;
+
+    private int waitForSensorsToWarmUp = 0;
+    private float DEFAULT_MIN_SENSITIVITY = 1.0F;
+    private float alpha = 0.8f;
+    private float maxNetForce = 0.0f;
+    private float[] gravity = {0, 0, 0};
+    private SleepData mSleepData;
+
 
     private final class UpdateTimerTask extends TimerTask {
         @Override
         public void run() {
-            //final long currentTime = System.currentTimeMillis();
-            //final float x = currentTime;
-            final float x = time;
-            time += 3;
+            final float x = System.currentTimeMillis();
             float y = java.lang.Math
                     .min(DEFAULT_MIN_SENSITIVITY, maxNetForce);
-            Log.d(TAG, time + ":  " + y);
-
-            final SleepPoint sleepPoint = new SleepPoint(x + "", y);
-            EventBus.getDefault().post(new SleepDataUpdateEvent(sleepPoint));
-//
+            final SleepPoint sleepPoint = new SleepPoint(x, y);
             mSleepData.add(sleepPoint);
-            jsonProcess(mSleepData);
-            // append the two doubles in sleepPoint to file
-            //TODO: send data to chart, stickyEvent
+            jsonProcess(mSleepData); //write data to json file
             maxNetForce = 0;
         }
     }
 
 
-    public static final String SLEEP_DATA = "sleepData";
-
-    private boolean alreadyDeletedResidualFile = false;
-    // Object for intrinsic lock
-    public static final Object DATA_LOCK = new Object();
-
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
-
-    private int waitForSensorsToWarmUp = 0;
-    public static float DEFAULT_MIN_SENSITIVITY = 1.0F;
-    private final float alpha = 0.8f;
-    private float maxNetForce = 0.0f;
-    public static int MAX_POINTS_IN_A_GRAPH = 200;
-    private float[] gravity = {0, 0, 0};
-    private SleepData mSleepData;
 
 
     private SensorEventListener mAccelerometerlistener = new SensorEventListener() {
-        private static final int BUFFER_SIZE = 50;
-        private static final String CSV_SEPARATOR = ",";
-        private String FILENAME = Environment.getExternalStorageDirectory().getPath() + "/data.csv";
-
 
         @Override
         public void onSensorChanged(final SensorEvent event) {
+
+            mShakeDetector.detectShake(event);
+
             if (waitForSensorsToWarmUp < 5) {
                 if (waitForSensorsToWarmUp == 4) {
                     waitForSensorsToWarmUp++;
                     try {
                         updateTask = new UpdateTimerTask();
                         updateTimer.scheduleAtFixedRate(updateTask,
-                                6000, 6000);
+                                10000, 10000); //delay 10sec, execute each 10sec
 
                     } catch (IllegalStateException ise) {
                         // user stopped monitoring really quickly after
@@ -103,7 +99,6 @@ public class AccelerometerDataService extends Service {
                 waitForSensorsToWarmUp++;
                 return;
             }
-
             gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
             gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
             gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
@@ -115,7 +110,6 @@ public class AccelerometerDataService extends Service {
             double mAccelCurrent = Math.sqrt(curX * curX + curY * curY + curZ * curZ);
             double absAccel = Math.abs(mAccelCurrent);
             maxNetForce = (float) (absAccel > maxNetForce ? absAccel : maxNetForce);
-
         }
 
         @Override
@@ -140,11 +134,24 @@ public class AccelerometerDataService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         mSleepData = new SleepData();
+        mShakeDetector = new ShakeDetector(getBaseContext());
+        mMyOrientationDetector = new MyOrientationDetector(this);
+
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("userInfo",
+                Activity.MODE_PRIVATE);
+        String username = preferences.getString("username", "");
+        filePath = SleepApplication.getFilePath(username);
 
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+
         sensorManager.registerListener(mAccelerometerlistener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mMyOrientationDetector.enable();
+
 
         //push Notification
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
@@ -163,35 +170,24 @@ public class AccelerometerDataService extends Service {
 
     @Override
     public void onDestroy() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                SleepData temp = mSleepData;
-                jsonProcess(temp);
-                return null;
-            }
-        };
         updateTimer.cancel();
         if (sensorManager != null) {
             sensorManager.unregisterListener(mAccelerometerlistener);
+            mMyOrientationDetector.disable();
         }
         super.onDestroy();
 
     }
 
-
     private void jsonProcess(SleepData sleepData) {
         Gson gson = new Gson();
-        System.out.println("filePath:" + filePath);//查看实际路径
+        Log.d(TAG, "filePath:" + filePath);
         try {
             String json = gson.toJson(sleepData);
             FileWriter writer = new FileWriter(filePath);
             writer.write(json);
             writer.close();
-            System.out.println("JSON写入完毕");
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

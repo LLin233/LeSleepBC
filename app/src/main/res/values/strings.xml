@@ -5,4 +5,11 @@
     <string name="stop_service">Stop recording</string>
     <string name="service_description">Recording accelerometer data</string>
     <string name="title_activity_sleep_tracking">SleepTrackingActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="title_dialog_shake_monitor_on">Monitor Stoped</string>
+    <string name="msg_dialog_shake_monitor_on">Device needs to be stable during monitoring</string>
+    <string name="title_dialog_shake_monitor_off">Shake Detected</string>
+    <string name="msg_dialog_shake_monitor_off">Do not shake your phone.</string>
+
 </resources>

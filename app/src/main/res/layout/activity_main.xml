@@ -22,20 +22,31 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"/>
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"/>
-
-    <Button
-        android:id="@+id/test"
-        android:layout_marginTop="500dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="flashData"
-        />
+        <Button
+            android:id="@+id/reload_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/container"
+            android:text="Reload"
+            android:onClick="flashData"
+            />
+        <Button
+            android:id="@+id/logout_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/reload_btn"
+            android:text="Logout"
+            />
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -1,19 +1,19 @@
-package androidpath.ll.lesleepbc;
+package androidpath.ll.lesleepbc.Model;
 
 /**
  * Created by Le on 2015/9/22.
  */
 public class SleepPoint {
 
-    private String timeStamp;
+    private float timeStamp;
     private float movementStatus;
 
-    public SleepPoint(String timeStamp, float movementStatus) {
+    public SleepPoint(float timeStamp, float movementStatus) {
         this.movementStatus = movementStatus;
         this.timeStamp = timeStamp;
     }
 
-    public String getTimeStamp() {
+    public float getTimeStamp() {
         return timeStamp;
     }
 
