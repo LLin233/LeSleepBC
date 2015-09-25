@@ -81,7 +81,7 @@ public class SleepTrackingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (ServiceTools.isServiceRunning("androidpath.ll.lesleepbc.AccelerometerDataService", getBaseContext())) {
+                if (ServiceTools.isServiceRunning("androidpath.ll.lesleepbc.AccelerometerDataService", getApplicationContext())) {
                     SWITCH_ON = true;
                 }
 
@@ -176,6 +176,15 @@ public class SleepTrackingActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (ServiceTools.isServiceRunning("androidpath.ll.lesleepbc.AccelerometerDataService", getApplicationContext())) {
+            stopRecordingService();
+        }
+
+    }
 
     @Override
     protected void onDestroy() {
