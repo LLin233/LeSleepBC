@@ -4,6 +4,7 @@
     <string name="start_service">Start recording</string>
     <string name="stop_service">Stop recording</string>
     <string name="service_description">Recording accelerometer data</string>
+    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_sleep_tracking">SleepTrackingActivity</string>
     <string name="title_activity_login">LoginActivity</string>
 

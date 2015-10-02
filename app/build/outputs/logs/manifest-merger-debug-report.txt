@@ -46,7 +46,7 @@ ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:14:9-23:20
 	android:label
 		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:16:13-45
 	android:theme
-		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:18:13-56
+		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:18:13-44
 	android:name
 		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:15:13-47
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
@@ -72,7 +72,7 @@ ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:27:9-36:20
 	android:parentActivityName
 		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:30:13-61
 	android:theme
-		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:32:13-56
+		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:32:13-44
 	android:name
 		ADDED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml:28:13-56
 meta-data#android.support.PARENT_ACTIVITY
@@ -97,7 +97,6 @@ MERGED from [com.android.support:design:22.2.0] D:\GitHub\LeSleepBC\app\build\in
 MERGED from [com.android.support:appcompat-v7:22.2.0] D:\GitHub\LeSleepBC\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\AndroidManifest.xml:20:5-43
 MERGED from [com.android.support:support-v4:22.2.0] D:\GitHub\LeSleepBC\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:20:5-43
 MERGED from [com.android.support:support-v4:22.2.0] D:\GitHub\LeSleepBC\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\AndroidManifest.xml:20:5-43
-MERGED from [com.github.lecho:hellocharts-android:v1.5.7] D:\GitHub\LeSleepBC\app\build\intermediates\exploded-aar\com.github.lecho\hellocharts-android\v1.5.7\AndroidManifest.xml:7:5-9:41
 	android:targetSdkVersion
 		INJECTED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml
 		INJECTED from D:\GitHub\LeSleepBC\app\src\main\AndroidManifest.xml

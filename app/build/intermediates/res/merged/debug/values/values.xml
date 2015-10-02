@@ -305,6 +305,7 @@
     <eat-comment/>
     <string name="stop_service">Stop recording</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_sleep_tracking">SleepTrackingActivity</string>
     <string name="title_dialog_shake_monitor_off">Shake Detected</string>
     <string name="title_dialog_shake_monitor_on">Monitor Stoped</string>
@@ -316,17 +317,13 @@
     <style name="Animation.AppCompat.DropDownUp" parent="Base.Animation.AppCompat.DropDownUp"/>
     <!-- From: file:/D:/GitHub/LeSleepBC/app/src/main/res/values/styles.xml -->
     <eat-comment/>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
     <!-- From: file:/D:/GitHub/LeSleepBC/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->
     <eat-comment/>

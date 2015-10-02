@@ -75,7 +75,7 @@ public class SleepTrackingActivity extends AppCompatActivity {
         mShakeDetector = new ShakeDetector(this);
         mHandler = new android.os.Handler();
         setUpSensor();
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
